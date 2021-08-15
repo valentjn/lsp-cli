@@ -1,0 +1,181 @@
+# Copyright (C) 2021 Julian Valentin, lsp-cli Development Community
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+name: "CI"
+
+on:
+  push:
+    branches:
+      - "*"
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - "develop"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "CI - Build Job"
+    runs-on: "${{ matrix.os }}"
+
+    strategy:
+      matrix:
+        os:
+          - "ubuntu-20.04"
+          - "macos-11.0"
+          - "windows-2019"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@v2"
+
+      - name: "Set up Java"
+        uses: "actions/setup-java@v1"
+        with:
+          java-version: "11.0.9"
+
+      - name: "Build lsp-cli"
+        run: "mvn -B -e verify"
+
+  inspect:
+    name: "CI - Inspect Job"
+    runs-on: "ubuntu-20.04"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@v2"
+
+      - name: "Set up Java"
+        uses: "actions/setup-java@v1"
+        with:
+          java-version: "11.0.9"
+
+      - name: "Set up Python"
+        uses: "actions/setup-python@v2"
+        with:
+          python-version: "3.9.0"
+
+      - name: "Build lsp-cli"
+        run: "mvn -B -e verify"
+
+      - name: "Set LSP_CLI_IDEA_ARCHIVE_NAME and LSP_CLI_IDEA_DIRECTORY_NAME"
+        run: "echo -e \"LSP_CLI_IDEA_ARCHIVE_NAME=ideaIC-2021.2.tar.gz\nLSP_CLI_IDEA_DIRECTORY_NAME=idea-IC-212.4746.92\" >> $GITHUB_ENV"
+
+      - name: "Load IntelliJ IDEA from Cache"
+        uses: "actions/cache@v2"
+        with:
+          path: "${{ env.LSP_CLI_IDEA_DIRECTORY_NAME }}"
+          key: "${{ env.LSP_CLI_IDEA_DIRECTORY_NAME }}-${{ runner.os }}-v1"
+
+      - name: "Download and Extract IntelliJ IDEA If Necessary"
+        run: "[[ -d ${{ env.LSP_CLI_IDEA_DIRECTORY_NAME }} ]] || { wget https://download.jetbrains.com/idea/${{ env.LSP_CLI_IDEA_ARCHIVE_NAME }} && tar -xzf ${{ env.LSP_CLI_IDEA_ARCHIVE_NAME }}; }"
+
+      - name: "Inspect Code with IntelliJ IDEA"
+        run: "python tools/inspectWithIntellijIdea.py --idea-path ${{ env.LSP_CLI_IDEA_DIRECTORY_NAME }}"
+
+  validate:
+    name: "CI - Validate Job"
+    runs-on: "ubuntu-20.04"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@v2"
+
+      - name: "Set up Python"
+        uses: "actions/setup-python@v2"
+        with:
+          python-version: "3.9.0"
+
+      - name: "Install Python Dependencies"
+        run: "python -m pip install --upgrade pip && pip install xmlschema==1.6.4"
+
+      - name: "Validate .assembly.xml"
+        run: "python -c 'import xmlschema; xmlschema.XMLSchema(\"schemas/assembly-2.1.0.xsd\").validate(\".assembly.xml\")'"
+
+      - name: "Validate changelog.xml"
+        run: "python -c 'import xmlschema; xmlschema.XMLSchema(\"schemas/changes-1.0.0.xsd\").validate(\"changelog.xml\")'"
+
+      - name: "Validate pom.xml"
+        run: "python -c 'import xmlschema; xmlschema.XMLSchema(\"schemas/maven-4.0.0.xsd\").validate(\"pom.xml\")'"
+
+  upload_coverage:
+    name: "CI - Upload Coverage Job"
+    if: "${{ github.event_name != 'pull_request' }}"
+    runs-on: "ubuntu-20.04"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@v2"
+
+      - name: "Set up Java"
+        uses: "actions/setup-java@v1"
+        with:
+          java-version: "11.0.9"
+
+      - name: "Build lsp-cli"
+        run: "mvn -B -e verify"
+
+      - name: "Upload Coverage Report to Coveralls"
+        env:
+          LSP_CLI_COVERALLS_REPOSITORY_TOKEN: "${{ secrets.LSP_CLI_COVERALLS_REPOSITORY_TOKEN }}"
+        run: "mvn -B -e coveralls:report \"-DrepoToken=$LSP_CLI_COVERALLS_REPOSITORY_TOKEN\""
+
+  deploy:
+    name: "CI - Deploy Job"
+    needs:
+      - "build"
+      - "inspect"
+      - "validate"
+      - "upload_coverage"
+    if: "${{ startsWith(github.ref, 'refs/tags/') }}"
+    runs-on: "ubuntu-20.04"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@v2"
+
+      - name: "Set up Java"
+        uses: "actions/setup-java@v1"
+        with:
+          java-version: "11.0.9"
+
+      - name: "Set up Python"
+        uses: "actions/setup-python@v2"
+        with:
+          python-version: "3.9.0"
+
+      - name: "Install Python Dependencies"
+        run: "python -m pip install --upgrade pip && pip install semver==2.13.0"
+
+      - name: "Set LSP_CLI_VERSION"
+        run: "echo \"LSP_CLI_VERSION=$(python -c \"import re; print(re.search(r'<version>(.*?)</version>', open('pom.xml', 'r').read()).group(1), end='')\")\" >> $GITHUB_ENV"
+
+      - name: "Check LSP_CLI_VERSION"
+        run: "if [[ -z \"$LSP_CLI_VERSION\" ]]; then echo 'Error: LSP_CLI_VERSION not set!'; (exit 1); fi; echo \"LSP_CLI_VERSION set to '$LSP_CLI_VERSION'\""
+
+      - name: "Set LSP_CLI_IS_PRERELEASE"
+        run: "if [[ -z \"$LSP_CLI_VERSION\" ]]; then echo 'Error: LSP_CLI_VERSION not set!'; (exit 1); fi; echo \"LSP_CLI_IS_PRERELEASE=$(python -c \"import semver; print('true' if semver.VersionInfo.parse('$LSP_CLI_VERSION').prerelease is not None else 'false', end='')\")\" >> $GITHUB_ENV"
+
+      - name: "Check LSP_CLI_IS_PRERELEASE"
+        run: "if [[ -z \"$LSP_CLI_IS_PRERELEASE\" ]]; then echo 'Error: LSP_CLI_IS_PRERELEASE not set!'; (exit 1); fi; echo \"LSP_CLI_IS_PRERELEASE set to '$LSP_CLI_IS_PRERELEASE'\""
+
+      - name: "Set LSP_CLI_CHANGELOG"
+        run: "if [ \"$LSP_CLI_IS_PRERELEASE\" = \"false\" ]; then echo \"LSP_CLI_CHANGELOG<<EOF\" >> $GITHUB_ENV; python tools/convertChangelog.py --xml-file changelog.xml --version latest >> $GITHUB_ENV; echo \"EOF\" >> $GITHUB_ENV; else echo \"LSP_CLI_CHANGELOG=This is a pre-release. Use at your own risk.\" >> $GITHUB_ENV; fi"
+
+      - name: "Build lsp-cli"
+        run: "mvn -B -e package"
+
+      - name: "Create Binary Archives"
+        run: "python tools/createBinaryArchives.py"
+
+      - name: "Create GitHub Release"
+        uses: "softprops/action-gh-release@v0.1.8"
+        with:
+          token: "${{ secrets.LSP_CLI_CREATE_GITHUB_RELEASE_TOKEN }}"
+          prerelease: "${{ env.LSP_CLI_IS_PRERELEASE }}"
+          body: "${{ env.LSP_CLI_CHANGELOG }}"
+          files: "target/lsp-cli-${{ env.LSP_CLI_VERSION }}.tar.gz\ntarget/lsp-cli-${{ env.LSP_CLI_VERSION }}-linux-x64.tar.gz\ntarget/lsp-cli-${{ env.LSP_CLI_VERSION }}-mac-x64.tar.gz\ntarget/lsp-cli-${{ env.LSP_CLI_VERSION }}-windows-x64.zip"
