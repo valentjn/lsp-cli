@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   - Copyright (C) 2021 Julian Valentin, lsp-cli Development Community
+   -
+   - This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at https://mozilla.org/MPL/2.0/.
+   -->
+<document xmlns="http://maven.apache.org/changes/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 https://maven.apache.org/xsd/changes-1.0.0.xsd">
+  <properties>
+    <title>Changelog</title>
+    <author>Julian Valentin, lsp-cli Development Community</author>
+  </properties>
+  <body>
+    <release version="1.0.0" date="upcoming">
+      <action type="add">
+        Initial release
+      </action>
+    </release>
+  </body>
+</document>
