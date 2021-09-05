@@ -12,7 +12,7 @@
     <author>Julian Valentin, lsp-cli Development Community</author>
   </properties>
   <body>
-    <release version="1.0.0" date="upcoming">
+    <release version="1.0.0" date="2021-09-05">
       <action type="add">
         Initial release
       </action>
