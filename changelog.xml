@@ -12,6 +12,11 @@
     <author>Julian Valentin, lsp-cli Development Community</author>
   </properties>
   <body>
+    <release version="1.0.1" date="upcoming">
+      <action type="update">
+        Rename internal messages bundle for internationalization to avoid name clashes
+      </action>
+    </release>
     <release version="1.0.0" date="2021-09-05">
       <action type="add">
         Initial release
