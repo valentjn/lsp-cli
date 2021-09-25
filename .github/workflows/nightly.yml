@@ -67,4 +67,4 @@ jobs:
           name: "${{ env.LSP_CLI_VERSION }}"
           prerelease:  true
           body: "This is a nightly build. Use at your own risk."
-          files: "target/lsp-cli-${{ env.LSP_CLI_VERSION }}.tar.gz"
+          files: "target/lsp-cli-${{ env.LSP_CLI_VERSION }}.tar.gz\ntarget/lsp-cli-${{ env.LSP_CLI_VERSION }}-linux-x64.tar.gz\ntarget/lsp-cli-${{ env.LSP_CLI_VERSION }}-mac-x64.tar.gz\ntarget/lsp-cli-${{ env.LSP_CLI_VERSION }}-windows-x64.zip"
