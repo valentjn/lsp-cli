@@ -12,6 +12,11 @@
     <author>Julian Valentin, lsp-cli Development Community</author>
   </properties>
   <body>
+    <release version="1.0.2" date="upcoming">
+      <action type="fix">
+        Fix usage help of command-line arguments
+      </action>
+    </release>
     <release version="1.0.1" date="2021-09-25">
       <action type="update">
         Rename internal messages bundle for internationalization to avoid name clashes

@@ -67,7 +67,8 @@ class LspCliLauncher : Callable<Int> {
   var verbose: Boolean = false
 
   @CommandLine.Parameters(paramLabel = "<path>", arity = "1..*", description = [
-    "Paths of files or directories to check. Directories are traversed recursively. "
+    "Paths of files or directories to check. "
+    + "Directories are traversed recursively for supported file types. "
     + "If - is given, standard input will be checked as plain text."
   ])
   var inputFilePaths: List<Path> = emptyList()

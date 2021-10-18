@@ -52,15 +52,14 @@ It is also possible to start `lsp-cli` directly without the startup scripts (not
 Any command-line arguments supplied to the startup scripts are processed by `lsp-cli` itself. The possible arguments are as follows:
 
 - `--client-configuration=<file>`: Use the client configuration stored in the JSON file `<file>`. The format is usually nested JSON objects (e.g., `{"latex": {"commands": ...}}`).\
-  Only for LT<sub>E</sub>X LS: A flattened JSON object (`{"latex.commands": ...}`) is also allowed. Setting names may be prefixed by a top level named `ltex` (e.g., `{"ltex.latex.commands": ...}` is accepted as well).
+  Only for LT<sub>E</sub>X LS: A flattened JSON object (`{"latex.commands": ...}`) is also allowed, and setting names may be prefixed by a top level named `ltex` (e.g., `{"ltex.latex.commands": ...}` is accepted as well).
 - `-h`, `--help`: Show help message and exit.
 - `--hide-commands`: Hide commands in lists of code actions for diagnostics, only show quick fixes.
-- `--input-documents=<path> <path> ...`: Instead of running as server, check the documents at the given paths, print the results to standard output, and exit. Directories are traversed recursively. If `-` is given, standard input will be checked as plain text.
 - `--server-command-line=<string>`: Required. Command line to start the language server, starting with the path of its executable. If you want to supply arguments to the language server, separate them with spaces. If the path of the executable or one of the arguments contain spaces, you can escape them by using `\ ` instead. In `.lsp-cli.json`, this option can either be specified as an array of arguments or as a string with space-separated arguments.
 - `--server-working-directory=<directory>`: Working directory for `--server-command-line`. If omitted, use the parent directory of `.lsp-cli.json` if given, otherwise use the current working directory.
 - `-V`, `--version`: Print version information as JSON to the standard output and exit. The format is a JSON object with `"java"` and `"lsp-cli"` keys and string values. A key may be missing if no information about the corresponding version could be retrieved.
 - `--verbose`: Write to standard error output what is being done.
-- `<path> <path> ...`
+- `<path> <path> ...`: Required. Paths of files or directories to check. Directories are traversed recursively for supported file types. If `-` is given, standard input will be checked as plain text.
 
 Instead of using the equals sign `=` to separate option names and values, it is also possible to use one or more spaces.
 
