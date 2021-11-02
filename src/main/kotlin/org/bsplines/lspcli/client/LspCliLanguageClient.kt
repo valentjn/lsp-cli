@@ -36,10 +36,9 @@ class LspCliLanguageClient(
   serverWorkingDirPath: Path? = null,
   clientConfigurationFilePath: Path? = null,
 ) : LanguageClient {
-  private val languageServerProcess: Process =
+  val languageServerProcess: Process =
       startLanguageServerProcess(serverCommandLine, serverWorkingDirPath)
   val languageServer: LanguageServer = initializeLanguageServer()
-
   val clientConfiguration: JsonObject = if (clientConfigurationFilePath != null) {
     JsonParser.parseString(FileIo.readFileWithException(clientConfigurationFilePath)).asJsonObject
   } else {
