@@ -13,6 +13,9 @@
   </properties>
   <body>
     <release version="1.0.2" date="upcoming">
+      <action type="fix" issue="ltex-ls#117">
+        Fix language server sometimes not terminated
+      </action>
       <action type="fix">
         Fix usage help of command-line arguments
       </action>

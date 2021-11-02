@@ -149,10 +149,15 @@ class LspCliLauncher : Callable<Int> {
       this.serverWorkingDirPath,
       this.clientConfigurationFilePath,
     )
-    val checker = Checker(client, hideCommands = this.hideCommands)
-    val numberOfMatches: Int = checker.check(this.inputFilePaths)
-    client.languageServer.shutdown()
-    return (if (numberOfMatches == 0) 0 else EXIT_CODE_MATCHES_FOUND)
+
+    try {
+      val checker = Checker(client, hideCommands = this.hideCommands)
+      val numberOfMatches: Int = checker.check(this.inputFilePaths)
+      return (if (numberOfMatches == 0) 0 else EXIT_CODE_MATCHES_FOUND)
+    } finally {
+      client.languageServer.shutdown()
+      client.languageServerProcess.destroy()
+    }
   }
 
   companion object {
