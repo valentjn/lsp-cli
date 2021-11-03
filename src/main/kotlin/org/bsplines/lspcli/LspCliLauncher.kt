@@ -93,8 +93,8 @@ class LspCliLauncher : Callable<Int> {
       parseResult.matchedOptionValue("--server-working-directory", null)
     } else {
       val string: String? = lspCliSettings.getValue(
-          "defaultValues",
-          "--server-working-directory",
+        "defaultValues",
+        "--server-working-directory",
       )?.asString
 
       if (string != null) {
@@ -108,8 +108,8 @@ class LspCliLauncher : Callable<Int> {
       parseResult.matchedOptionValue("--client-configuration", null)
     } else {
       lspCliSettings.getValue(
-          "defaultValues",
-          "--client-configuration",
+        "defaultValues",
+        "--client-configuration",
       )?.asString?.let { Path.of(it) }
     }
 
