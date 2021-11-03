@@ -17,6 +17,9 @@
         Fix language server sometimes not terminated
       </action>
       <action type="fix">
+        Fix error when running `lsp-cli` from a different directory than `bin/`
+      </action>
+      <action type="fix">
         Fix usage help of command-line arguments
       </action>
     </release>

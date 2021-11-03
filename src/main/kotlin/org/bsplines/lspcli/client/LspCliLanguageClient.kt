@@ -88,13 +88,26 @@ class LspCliLanguageClient(
       serverCommandLine: List<String>,
       serverWorkingDirPath: Path? = null,
     ): Process {
+      val absoluteServerCommandLine: MutableList<String> = serverCommandLine.toMutableList()
+
+      if (serverWorkingDirPath != null) {
+        absoluteServerCommandLine[0] =
+            serverWorkingDirPath.resolve(absoluteServerCommandLine[0]).toString()
+      }
+
       Logging.logger.info(
-        I18n.format("startingLanguageServer", serverCommandLine.joinToString(" "))
+        I18n.format(
+          "startingLanguageServer",
+          absoluteServerCommandLine.joinToString(" "),
+          serverWorkingDirPath?.toFile(),
+        )
       )
+
       val processBuilder: ProcessBuilder =
-        ProcessBuilder(serverCommandLine).directory(serverWorkingDirPath?.toFile())
+          ProcessBuilder(absoluteServerCommandLine).directory(serverWorkingDirPath?.toFile())
       val process: Process = processBuilder.start()
       Runtime.getRuntime().addShutdownHook(Thread(process::destroy))
+
       return process
     }
   }
