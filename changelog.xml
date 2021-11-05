@@ -12,7 +12,7 @@
     <author>Julian Valentin, lsp-cli Development Community</author>
   </properties>
   <body>
-    <release version="1.0.2" date="upcoming">
+    <release version="1.0.2" date="2021-11-05">
       <action type="fix" issue="ltex-ls#117">
         Fix language server sometimes not terminated
       </action>
