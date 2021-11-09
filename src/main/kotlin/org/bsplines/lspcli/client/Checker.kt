@@ -85,7 +85,7 @@ class Checker(
     Logging.logger.info(I18n.format("checkingFile", path.toString()))
 
     this.languageClient.languageServer.textDocumentService.didOpen(
-      DidOpenTextDocumentParams(document)
+      DidOpenTextDocumentParams(document),
     )
 
     Logging.logger.info(I18n.format("waitingForDiagnosticsForFile", path.toString()))
@@ -112,7 +112,7 @@ class Checker(
       val codeActionTitles = ArrayList<String>()
       val codeActionResult: List<Either<Command, CodeAction>> =
           this.languageClient.languageServer.textDocumentService.codeAction(
-            CodeActionParams(documentId, diagnostic.range, CodeActionContext(listOf(diagnostic)))
+            CodeActionParams(documentId, diagnostic.range, CodeActionContext(listOf(diagnostic))),
           ).get()
 
       for (entry: Either<Command, CodeAction> in codeActionResult) {
@@ -180,9 +180,11 @@ class Checker(
       val lineEndPos: Int = document.convertPosition(Position(fromPosition.line + 1, 0))
       val line: String = text.substring(lineStartPos, lineEndPos)
 
-      println(Ansi.ansi().a(line.substring(0, fromPos - lineStartPos)).bold().fg(color)
-          .a(line.substring(fromPos - lineStartPos, toPos - lineStartPos)).reset()
-          .a(line.substring(toPos - lineStartPos).replaceFirst(TRAILING_WHITESPACE_REGEX, "")))
+      println(
+        Ansi.ansi().a(line.substring(0, fromPos - lineStartPos)).bold().fg(color)
+        .a(line.substring(fromPos - lineStartPos, toPos - lineStartPos)).reset()
+        .a(line.substring(toPos - lineStartPos).replaceFirst(TRAILING_WHITESPACE_REGEX, "")),
+      )
 
       var indentationSize = guessIndentationSize(text, lineStartPos, fromPos, terminalWidth)
 

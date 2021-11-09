@@ -100,7 +100,7 @@ class LspCliLanguageClient(
           "startingLanguageServer",
           absoluteServerCommandLine.joinToString(" "),
           serverWorkingDirPath?.toFile(),
-        )
+        ),
       )
 
       val processBuilder: ProcessBuilder =

@@ -53,8 +53,11 @@ class LspCliTextDocumentItem(
       line >= this.lineStartPosList.size -> text.length
       else -> {
         val lineStart: Int = this.lineStartPosList[line]
-        val nextLineStart: Int = (if (line < this.lineStartPosList.size - 1)
-          this.lineStartPosList[line + 1] else text.length)
+        val nextLineStart: Int = if (line < this.lineStartPosList.size - 1) {
+          this.lineStartPosList[line + 1]
+        } else {
+          text.length
+        }
         val lineLength: Int = nextLineStart - lineStart
 
         when {

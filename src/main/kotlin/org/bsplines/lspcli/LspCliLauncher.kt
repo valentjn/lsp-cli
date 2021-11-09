@@ -26,51 +26,70 @@ import kotlin.system.exitProcess
   mixinStandardHelpOptions = true,
   showDefaultValues = true,
   versionProvider = VersionProvider::class,
-  description = ["lsp-cli - CLI language client for LSP language servers"],
+  description = ["lsp-cli - CLI language client for LSP language servers"]
 )
 class LspCliLauncher : Callable<Int> {
-  @CommandLine.Option(names = ["--server-command-line"], paramLabel = "<string>", required = true,
+  @CommandLine.Option(
+    names = ["--server-command-line"],
+    paramLabel = "<string>",
+    required = true,
     description = [
       "Required. Command line to start the language server, starting with the path of its "
       + "executable. If you want to supply arguments to the language server, separate them with "
       + "spaces. If the path of the executable or one of the arguments contain spaces, you can "
       + "escape them by using '\\ ' instead. In .lsp-cli.json, this option can either be "
-      + "specified as an array of arguments or as a string with space-separated arguments."
-    ],
+      + "specified as an array of arguments or as a string with space-separated arguments.",
+    ]
   )
   var serverCommandLineString: String? = null
 
   var serverCommandLineList: List<String>? = null
 
-  @CommandLine.Option(names = ["--server-working-directory"], paramLabel = "<directory>",
+  @CommandLine.Option(
+    names = ["--server-working-directory"],
+    paramLabel = "<directory>",
     description = [
       "Working directory for --server-command-line. If omitted, use the parent directory of "
-      + "`.lsp-cli.json` if given, otherwise use the current working directory."
-    ],
+      + "`.lsp-cli.json` if given, otherwise use the current working directory.",
+    ]
   )
   var serverWorkingDirPath: Path? = null
 
-  @CommandLine.Option(names = ["--client-configuration"], paramLabel = "<file>", description = [
-    "Use the client configuration stored in the JSON file <file>. The format is usually nested "
-    + "JSON objects (e.g., {\"latex\": {\"commands\": ...}})."
-  ])
+  @CommandLine.Option(
+    names = ["--client-configuration"],
+    paramLabel = "<file>",
+    description = [
+      "Use the client configuration stored in the JSON file <file>. The format is usually nested "
+      + "JSON objects (e.g., {\"latex\": {\"commands\": ...}}).",
+    ]
+  )
   var clientConfigurationFilePath: Path? = null
 
-  @CommandLine.Option(names = ["--hide-commands"], description = [
-    "Hide commands in lists of code actions for diagnostics, only show quick fixes."
-  ])
+  @CommandLine.Option(
+    names = ["--hide-commands"],
+    description = [
+      "Hide commands in lists of code actions for diagnostics, only show quick fixes.",
+    ]
+  )
   var hideCommands: Boolean = false
 
-  @CommandLine.Option(names = ["--verbose"], description = [
-    "Write to standard error output what is being done."
-  ])
+  @CommandLine.Option(
+    names = ["--verbose"],
+    description = [
+      "Write to standard error output what is being done.",
+    ]
+  )
   var verbose: Boolean = false
 
-  @CommandLine.Parameters(paramLabel = "<path>", arity = "1..*", description = [
-    "Paths of files or directories to check. "
-    + "Directories are traversed recursively for supported file types. "
-    + "If - is given, standard input will be checked as plain text."
-  ])
+  @CommandLine.Parameters(
+    paramLabel = "<path>",
+    arity = "1..*",
+    description = [
+      "Paths of files or directories to check. "
+      + "Directories are traversed recursively for supported file types. "
+      + "If - is given, standard input will be checked as plain text.",
+    ]
+  )
   var inputFilePaths: List<Path> = emptyList()
 
   constructor()
@@ -248,7 +267,7 @@ class LspCliLauncher : Callable<Int> {
 
       for (classOptionSpec: CommandLine.Model.OptionSpec in classCommandSpec.options()) {
         commandSpec.addOption(
-          createOptionSpec(classOptionSpec, defaultValues, hiddenArguments, visibleArguments)
+          createOptionSpec(classOptionSpec, defaultValues, hiddenArguments, visibleArguments),
         )
       }
 
