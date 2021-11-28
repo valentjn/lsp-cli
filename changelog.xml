@@ -12,6 +12,14 @@
     <author>Julian Valentin, lsp-cli Development Community</author>
   </properties>
   <body>
+    <release version="1.0.3" date="upcoming">
+      <action type="update">
+        Bump Kotlin to 1.6.0
+      </action>
+      <action type="update">
+        Bump picocli to 4.6.2
+      </action>
+    </release>
     <release version="1.0.2" date="2021-11-05">
       <action type="fix" issue="ltex-ls#117">
         Fix language server sometimes not terminated
