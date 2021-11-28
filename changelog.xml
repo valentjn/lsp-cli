@@ -12,7 +12,7 @@
     <author>Julian Valentin, lsp-cli Development Community</author>
   </properties>
   <body>
-    <release version="1.0.3" date="upcoming">
+    <release version="1.0.3" date="2021-11-28">
       <action type="update">
         Bump Kotlin to 1.6.0
       </action>
