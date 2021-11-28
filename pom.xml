@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.bsplines</groupId>
   <artifactId>lspcli</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4-alpha.1.develop</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>lsp-cli: CLI language client for LSP language servers</description>
   <url>https://github.com/valentjn/lsp-cli</url>
